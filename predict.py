@@ -1,5 +1,8 @@
 import kagglehub
 import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import confusion_matrix, classification_report
 
 # Download latest version
 path = kagglehub.dataset_download("nathanlauga/nba-games")
@@ -37,6 +40,7 @@ def convert_to_percentage(df, colname, isHomeTeam):
     df = df.astype({col_w: int, col_l: int})
     df[col] = round(df[col_w] / (df[col_w] + df[col_l]), 3)
     df = df.drop(columns=[col_w, col_l])
+    df = df.dropna(subset=[col]) # drops divide by 0 errors (team hasn't played yet that season)
     return(df)
 
 def convert_to_percentages(data):
@@ -46,7 +50,33 @@ def convert_to_percentages(data):
     df = convert_to_percentage(df, 'ROAD_RECORD', False)
     return(df)
     
-total_merged = convert_to_percentages(total_merged)
-print(total_merged.head())
-print(total_merged.shape)
-    
+total_merged = convert_to_percentages(total_merged)[::-1] # flipped to chronological order
+# print(total_merged.head())
+# print(total_merged.shape)
+
+# Independent (predictors) and Dependent (won?) Columns
+X = total_merged[['W_PCT_home', 'W_PCT_away', 'HOME_RECORD_home', 'ROAD_RECORD_away']]
+y = total_merged['HOME_TEAM_WINS']
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size = 0.2,
+    random_state = 38,
+    shuffle = False,
+    stratify = None
+)
+
+# print(X_train, y_train)
+
+model = LogisticRegression()
+model.fit(X_train, y_train)
+preds = model.predict(X_test)
+
+print(X_test)
+print(preds)
+print(y_test)
+
+print(y_train.value_counts(normalize=True))
+print(confusion_matrix(y_test, preds))
+print(classification_report(y_test, preds))
