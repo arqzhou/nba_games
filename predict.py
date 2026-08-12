@@ -106,19 +106,6 @@ def basic_logistic_regression_w_last_ten(total_merged):
     print(confusion_matrix(y_test, preds))
     print(classification_report(y_test, preds))
 
-    # with mlflow.start_run(run_name="logreg_with_last_ten"):
-    #     mlflow.log_param("features", X.columns.tolist())
-    #     mlflow.log_param("model", "LogisticRegression")
-
-    #     model.fit(X_train, y_train)
-    #     preds = model.predict(X_test)
-
-    #     mlflow.log_metric("accuracy", accuracy_score(y_test, preds))
-    #     mlflow.log_metric("precision", precision_score(y_test, preds))
-    #     mlflow.log_metric("recall", recall_score(y_test, preds))
-
-    #     mlflow.sklearn.log_model(model, "model")
-
     for feature, coef in zip(X.columns, model.coef_[0]):
         print(f"{feature}: {coef:.3f}")
 
