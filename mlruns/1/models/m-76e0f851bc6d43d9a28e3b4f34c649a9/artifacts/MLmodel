@@ -1,0 +1,32 @@
+artifact_path: /home/moonlight/Documents/NBA_Games/nba_games/mlruns/1/models/m-76e0f851bc6d43d9a28e3b4f34c649a9/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.12.3
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.9.0
+    skops_trusted_types: null
+is_signature_from_type_hint: false
+mlflow_version: 3.15.1
+model_id: m-76e0f851bc6d43d9a28e3b4f34c649a9
+model_size_bytes: 3773
+model_uuid: m-76e0f851bc6d43d9a28e3b4f34c649a9
+prompts: null
+run_id: a0a6360d41ca4a4eadba0c7bd0c4da82
+signature:
+  inputs: '[{"type": "double", "name": "W_PCT_home", "required": true}, {"type": "double",
+    "name": "W_PCT_away", "required": true}, {"type": "double", "name": "HOME_RECORD_home",
+    "required": true}, {"type": "double", "name": "ROAD_RECORD_away", "required":
+    true}]'
+  outputs: '[{"type": "tensor", "tensor-spec": {"dtype": "int64", "shape": [-1]}}]'
+  params: null
+type_hint_from_example: false
+utc_time_created: '2026-08-12 18:16:51.965122'

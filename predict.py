@@ -97,8 +97,9 @@ def basic_logistic_regression_w_last_ten(total_merged):
     )
 
     model = LogisticRegression()
-    model.fit(X_train, y_train)
-    preds = model.predict(X_test)
+    with mlflow.start_run(run_name="logreg_with_last_ten"):
+        model.fit(X_train, y_train)   # autolog captures this call automatically
+        preds = model.predict(X_test)
 
     print(X.head())
 
@@ -136,9 +137,10 @@ def decision_tree_w_last_ten(total_merged):
     )
 
     # Not as effective since there aren't complex interactions.
-    tree = DecisionTreeClassifier(max_depth=4)
-    tree.fit(X_train, y_train)
-    tree_preds = tree.predict(X_test)
+    tree = DecisionTreeClassifier(max_depth=8)
+    with mlflow.start_run(run_name="tree_with_last_ten"):
+            tree.fit(X_train, y_train)   # autolog captures this call automatically
+            tree_preds = tree.predict(X_test)
 
     print(confusion_matrix(y_test, tree_preds))
     print(classification_report(y_test, tree_preds))
@@ -163,8 +165,9 @@ def basic_logistic_regression(total_merged):
     )
 
     model = LogisticRegression()
-    model.fit(X_train, y_train)
-    preds = model.predict(X_test)
+    with mlflow.start_run(run_name="logreg"):
+            model.fit(X_train, y_train)   # autolog captures this call automatically
+            preds = model.predict(X_test)
 
     print(confusion_matrix(y_test, preds))
     print(classification_report(y_test, preds))
@@ -187,9 +190,10 @@ def decision_tree(total_merged):
     )
 
     # Not as effective since there aren't complex interactions.
-    tree = DecisionTreeClassifier(max_depth=4)
-    tree.fit(X_train, y_train)
-    tree_preds = tree.predict(X_test)
+    tree = DecisionTreeClassifier(max_depth=8)
+    with mlflow.start_run(run_name="tree"):
+            tree.fit(X_train, y_train)   # autolog captures this call automatically
+            tree_preds = tree.predict(X_test)
 
     print(confusion_matrix(y_test, tree_preds))
     print(classification_report(y_test, tree_preds))
@@ -197,8 +201,9 @@ def decision_tree(total_merged):
     for name, importance in zip(X.columns, tree.feature_importances_):
             print(f"{name}: {importance:.3f}")
 
-basic_logistic_regression(total_merged)
+# basic_logistic_regression(total_merged)
 decision_tree(total_merged)
-print("With last ten:")
-basic_logistic_regression_w_last_ten(total_merged)
+# print("With last ten:")
+# basic_logistic_regression_w_last_ten(total_merged)
 decision_tree_w_last_ten(total_merged)
+print(mlflow.get_experiment_by_name("nba_predictor"))
