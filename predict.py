@@ -4,34 +4,38 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import confusion_matrix, classification_report
 from sklearn.tree import DecisionTreeClassifier
-
+import datetime as dt
+from rolled import RDF
 
 # Download latest version
 path = kagglehub.dataset_download("nathanlauga/nba-games")
 
 games_raw = pd.read_csv(f"{path}/games.csv")
-games = games_raw[['GAME_DATE_EST', 'HOME_TEAM_ID', 'VISITOR_TEAM_ID', 'HOME_TEAM_WINS']]
+games = games_raw[['GAME_ID', 'GAME_DATE_EST', 'HOME_TEAM_ID', 'VISITOR_TEAM_ID', 'HOME_TEAM_WINS']]
 
-rankings_raw = pd.read_csv(f"{path}/ranking.csv")
-rankings = rankings_raw[['TEAM_ID', 'STANDINGSDATE', 'W_PCT', 'HOME_RECORD', 'ROAD_RECORD', 'W', 'L']]
+new_test = RDF(games)
+new_test.calc_last_tens()
 
-home_merged = pd.merge(
-    games,
-    rankings.add_suffix('_home'),
-    left_on=['HOME_TEAM_ID', 'GAME_DATE_EST'],
-    right_on=['TEAM_ID_home', 'STANDINGSDATE_home'],
-    how='left',
-).drop(columns=['TEAM_ID_home', 'STANDINGSDATE_home'])
+# rankings_raw = pd.read_csv(f"{path}/ranking.csv")
+# rankings = rankings_raw[['TEAM_ID', 'STANDINGSDATE', 'W_PCT', 'HOME_RECORD', 'ROAD_RECORD', 'W', 'L']]
 
-total_merged = pd.merge(
-    home_merged,
-    rankings.add_suffix('_away'),
-    left_on=['VISITOR_TEAM_ID', 'GAME_DATE_EST'],
-    right_on=['TEAM_ID_away', 'STANDINGSDATE_away'],
-    how='left',
-).drop(columns=['TEAM_ID_away', 'STANDINGSDATE_away'])
+# home_merged = pd.merge(
+#     games,
+#     rankings.add_suffix('_home'),
+#     left_on=['HOME_TEAM_ID', 'GAME_DATE_EST'],
+#     right_on=['TEAM_ID_home', 'STANDINGSDATE_home'],
+#     how='left',
+# ).drop(columns=['TEAM_ID_home', 'STANDINGSDATE_home'])
 
-print(total_merged.head())
+# total_merged = pd.merge(
+#     home_merged,
+#     rankings.add_suffix('_away'),
+#     left_on=['VISITOR_TEAM_ID', 'GAME_DATE_EST'],
+#     right_on=['TEAM_ID_away', 'STANDINGSDATE_away'],
+#     how='left',
+# ).drop(columns=['TEAM_ID_away', 'STANDINGSDATE_away'])
+
+# print(total_merged.head())
 
 def convert_to_percentage(df, colname, isHomeTeam):
     suffix = '_home' if isHomeTeam else '_away'
@@ -50,7 +54,7 @@ def convert_to_percentages(data):
     df = convert_to_percentage(df, 'ROAD_RECORD', False)
     return(df)
     
-total_merged = convert_to_percentages(total_merged)[::-1] # flipped to chronological order
+# total_merged = convert_to_percentages(total_merged)[::-1] # flipped to chronological order
 
 def basic_logistic_regression(total_merged):
     # Independent (predictors) and Dependent (won?) Columns
@@ -100,4 +104,4 @@ def decision_tree(total_merged):
 
 
 # basic_logistic_regression(total_merged)
-decision_tree(total_merged)
+# decision_tree(total_merged)
