@@ -6,6 +6,7 @@ from sklearn.metrics import confusion_matrix, classification_report
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from last_x import RDF
+import xgboost as xgb
 
 # Download latest version
 path = kagglehub.dataset_download("nathanlauga/nba-games")
@@ -207,6 +208,27 @@ def random_forest(total_merged, n_estimators, max_tree_depth):
     # for name, importance in zip(X.columns, forest.feature_importances_):
     #     print(f"{name}: {importance:.3f}")
 
+def xgb_model(total_merged, n_estimators, max_tree_depth):
+    # Independent (predictors) and Dependent (won?) Columns
+    X = total_merged[['W_PCT_home', 'W_PCT_away', 'HOME_RECORD_home', 'ROAD_RECORD_away']]
+    y = total_merged['HOME_TEAM_WINS']
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X,
+        y,
+        test_size = 0.2,
+        random_state = 38,
+        shuffle = False,
+        stratify = None
+    )
+
+    model = xgb.XGBClassifier()
+    model.fit(X_train, y_train)
+    preds = model.predict(X_test)
+
+    print(confusion_matrix(y_test, preds))
+    print(classification_report(y_test, preds))
+
 # Uncomment to test models.
 
 # basic_logistic_regression(total_merged)
@@ -214,3 +236,4 @@ def random_forest(total_merged, n_estimators, max_tree_depth):
 # basic_logistic_regression_w_last_x(total_merged)
 # decision_tree_w_last_x(total_merged, max_tree_depth)
 # random_forest(total_merged, n_est, max_tree_depth)
+xgb_model(total_merged, n_est, max_tree_depth)
