@@ -200,7 +200,7 @@ The random forest did no better than the singular decision tree, which makes sen
 
 ## XGBoost
 
-- Hypothesis: n_estimators = 100, max_depth = 4.
+- Hypothesis: n_estimators = 100, max_depth = 6.
     
     
     | Confusion Matrix | True Loss | True Win |
@@ -216,16 +216,37 @@ The random forest did no better than the singular decision tree, which makes sen
     | accuracy |  |  | 0.73 | 5094 |
     
 
-XGBoost actually performed slightly worse than a regular decision tree, which lines up with how XGBoost works. After the first or second tree, the model learns to fit the residual error of the previous tree in the sequence, which typically helps it to learn from previous mistakes. However, the first few trees in this example are already performing at the ceiling (a singular decision tree was already at 0.74 accuracy), so all trees after the initial few are just fitting to random noise, which is why XGBoost actually performs worse than a single tree.
+XGBoost (at depth 6) actually performed slightly worse than a regular decision tree, which lines up with how XGBoost works. After the first or second tree, the model learns to fit the residual error of the previous tree in the sequence, which typically helps it to learn from previous mistakes. However, the first few trees in this example are already performing at the ceiling (a singular decision tree was already at 0.74 accuracy), so all trees after the initial few are just fitting to random noise, which is why XGBoost actually performs worse than a single tree.
 
 # Comparison
 
 | Ranking | Accuracy | Model |
 | --- | --- | --- |
-| 1 | 0.75 | Logistic Regression |
+| 1= | 0.75 | Logistic Regression |
+| 1= | 0.75 | Neural Network (6, 3, 1) |
 | 2= | 0.74 | Decision Tree (depth = 6) |
 | 2= | 0.74 | Random Forest (n_estimators = 100, max_depth = 4) |
-| 4= | 0.73 | XGBoost (n_estimators = 100, max_depth = 4) |
+| 2= | 0.74 | XGBoost (n_estimators = 100, max_depth = 4) |
+| 4= | 0.73 | XGBoost (n_estimators = 100, max_depth = 6) |
 | 4= | 0.73 | Decision Tree (depth = 4) |
 
 Based on the data available, the best performing model is logistic regression. This dataset does not play well to the Decision Trees’ strengths.
+
+## Neural Network w/ TensorFlow (just to practice it)
+
+- Hypothesis: epochs = 10, batch_size = 32
+    
+    
+    | Confusion Matrix | True Loss | True Win |
+    | --- | --- | --- |
+    | Predicted Loss | 1414 | 704 |
+    | Predicted Win | 588 | 2388 |
+    
+    | Classification Report | precision | recall | f1-score | support |
+    | --- | --- | --- | --- | --- |
+    | 0 | 0.71 | 0.67 | 0.69 | 2118 |
+    | 1 | 0.77 | 0.80 | 0.79 | 2976 |
+    |  |  |  |  |  |
+    | accuracy |  |  | 0.75 | 5094 |
+    
+    The neural network performed about as well as logistic regression, with very diminishing returns in improvement after 10 epochs.
