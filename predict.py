@@ -7,6 +7,9 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from last_x import RDF
 import xgboost as xgb
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras import layers
 
 # Download latest version
 path = kagglehub.dataset_download("nathanlauga/nba-games")
@@ -229,6 +232,33 @@ def xgb_model(total_merged, n_estimators, max_tree_depth):
     print(confusion_matrix(y_test, preds))
     print(classification_report(y_test, preds))
 
+def nn_model(total_merged):
+    # Independent (predictors) and Dependent (won?) Columns
+    X = total_merged[['W_PCT_home', 'W_PCT_away', 'HOME_RECORD_home', 'ROAD_RECORD_away']]
+    y = total_merged['HOME_TEAM_WINS']
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X,
+        y,
+        test_size = 0.2,
+        random_state = 38,
+        shuffle = False,
+        stratify = None
+    )
+
+    nn_games_model = tf.keras.Sequential([
+        tf.keras.layers.Dense(6, activation='relu'),
+        tf.keras.layers.Dense(3, activation='relu'),
+        tf.keras.layers.Dense(1),
+    ])
+
+    nn_games_model.fit(X_train, y_train)
+    preds = nn_games_model.predict(X_test)
+    preds = np.where(preds>0.5, 1, 0)
+    print(confusion_matrix(y_test, preds))
+    print(classification_report(y_test, preds))
+
+
 # Uncomment to test models.
 
 # basic_logistic_regression(total_merged)
@@ -236,4 +266,5 @@ def xgb_model(total_merged, n_estimators, max_tree_depth):
 # basic_logistic_regression_w_last_x(total_merged)
 # decision_tree_w_last_x(total_merged, max_tree_depth)
 # random_forest(total_merged, n_est, max_tree_depth)
-xgb_model(total_merged, n_est, max_tree_depth)
+# xgb_model(total_merged, n_est, max_tree_depth)
+nn_model(total_merged)
