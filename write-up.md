@@ -1,4 +1,4 @@
-### Goal: Train a model based on NBA_games dataset to predict the winner of each game.
+# Goal: Train a model based on NBA_games dataset to predict the winner of each game.
 
 Features:
 
@@ -11,13 +11,16 @@ Features:
 | LAST_X_away | Win percentage of the away team’s last X games (default to 10) |
 | Predicting: HOME_TEAM_WINS | 1 if home team wins, 0 if home team loses |
 
-# Models
+## Models
 
 - Logistic Regression (w/wo LAST_X_ features)
 - Decision Tree (w/wo LAST_X_ features, depths = 4, 6, and 8)
-- Bagged Decision Trees?
-- Random Forest?
+- Bagged Decision Trees
+- Random Forest
 - XGBoost
+
+## Main Takeaway
+The various models all reached a rough ceiling of about 75% accuracy, which indicates that there is a limit to how well models can be trained to make predictions with this dataset.
 
 ## Logistic Regression
 
